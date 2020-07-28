@@ -79,7 +79,7 @@ def stat_name_default_handler(stat_name, max_length=250) -> str:
         raise InvalidStatsNameException(textwrap.dedent("""\
             The stat_name ({stat_name}) has to be less than {max_length} characters.
         """.format(stat_name=stat_name, max_length=max_length)))
-    if not all((c in ALLOWED_CHARACTERS) for c in stat_name):
+    if any(c not in ALLOWED_CHARACTERS for c in stat_name):
         raise InvalidStatsNameException(textwrap.dedent("""\
             The stat name ({stat_name}) has to be composed with characters in
             {allowed_characters}.
@@ -118,7 +118,7 @@ class AllowListValidator:
 
     def __init__(self, allow_list=None):
         if allow_list:
-            self.allow_list = tuple([item.strip().lower() for item in allow_list.split(',')])
+            self.allow_list = tuple(item.strip().lower() for item in allow_list.split(','))
         else:
             self.allow_list = None
 
@@ -249,12 +249,11 @@ class _Stats(type):
     def get_constant_tags(self):
         tags = []
         tags_in_string = conf.get('scheduler', 'statsd_datadog_tags', fallback=None)
-        if tags_in_string is None or tags_in_string == '':
-            return tags
-        else:
+        if tags_in_string is not None and tags_in_string != '':
             for key_value in tags_in_string.split(','):
                 tags.append(key_value)
-            return tags
+
+        return tags
 
 
 if TYPE_CHECKING:

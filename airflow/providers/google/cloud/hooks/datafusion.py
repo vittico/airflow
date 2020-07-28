@@ -161,8 +161,7 @@ class DataFusionHook(GoogleBaseHook):
 
         payload = json.dumps(body) if body else None
 
-        response = request(method=method, url=url, headers=headers, body=payload)
-        return response
+        return request(method=method, url=url, headers=headers, body=payload)
 
     def get_conn(self) -> Resource:
         """
@@ -193,7 +192,7 @@ class DataFusionHook(GoogleBaseHook):
         :param project_id: The ID of the Google Cloud Platform project that the instance belongs to.
         :type project_id: str
         """
-        operation = (
+        return (
             self.get_conn()  # pylint: disable=no-member
             .projects()
             .locations()
@@ -201,7 +200,6 @@ class DataFusionHook(GoogleBaseHook):
             .restart(name=self._name(project_id, location, instance_name))
             .execute(num_retries=self.num_retries)
         )
-        return operation
 
     @GoogleBaseHook.fallback_to_default_project_id
     def delete_instance(
@@ -217,7 +215,7 @@ class DataFusionHook(GoogleBaseHook):
         :param project_id: The ID of the Google Cloud Platform project that the instance belongs to.
         :type project_id: str
         """
-        operation = (
+        return (
             self.get_conn()  # pylint: disable=no-member
             .projects()
             .locations()
@@ -225,7 +223,6 @@ class DataFusionHook(GoogleBaseHook):
             .delete(name=self._name(project_id, location, instance_name))
             .execute(num_retries=self.num_retries)
         )
-        return operation
 
     @GoogleBaseHook.fallback_to_default_project_id
     def create_instance(
@@ -248,7 +245,7 @@ class DataFusionHook(GoogleBaseHook):
         :param project_id: The ID of the Google Cloud Platform project that the instance belongs to.
         :type project_id: str
         """
-        operation = (
+        return (
             self.get_conn()  # pylint: disable=no-member
             .projects()
             .locations()
@@ -260,7 +257,6 @@ class DataFusionHook(GoogleBaseHook):
             )
             .execute(num_retries=self.num_retries)
         )
-        return operation
 
     @GoogleBaseHook.fallback_to_default_project_id
     def get_instance(
@@ -276,7 +272,7 @@ class DataFusionHook(GoogleBaseHook):
         :param project_id: The ID of the Google Cloud Platform project that the instance belongs to.
         :type project_id: str
         """
-        instance = (
+        return (
             self.get_conn()  # pylint: disable=no-member
             .projects()
             .locations()
@@ -284,7 +280,6 @@ class DataFusionHook(GoogleBaseHook):
             .get(name=self._name(project_id, location, instance_name))
             .execute(num_retries=self.num_retries)
         )
-        return instance
 
     @GoogleBaseHook.fallback_to_default_project_id
     def patch_instance(
@@ -315,7 +310,7 @@ class DataFusionHook(GoogleBaseHook):
         :param project_id: The ID of the Google Cloud Platform project that the instance belongs to.
         :type project_id: str
         """
-        operation = (
+        return (
             self.get_conn()  # pylint: disable=no-member
             .projects()
             .locations()
@@ -327,7 +322,6 @@ class DataFusionHook(GoogleBaseHook):
             )
             .execute(num_retries=self.num_retries)
         )
-        return operation
 
     def create_pipeline(
         self,

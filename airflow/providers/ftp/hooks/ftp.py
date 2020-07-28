@@ -43,10 +43,7 @@ def mlsd(conn, path: str = "", facts: Optional[Union[str, List[str]]] = None) ->
     facts = facts or []
     if facts:
         conn.sendcmd("OPTS MLST " + ";".join(facts) + ";")
-    if path:
-        cmd = "MLSD %s" % path
-    else:
-        cmd = "MLSD"
+    cmd = "MLSD %s" % path if path else "MLSD"
     lines: List = []
     conn.retrlines(cmd, lines.append)
     for line in lines:
@@ -127,8 +124,7 @@ class FTPHook(BaseHook):
         conn = self.get_conn()
         conn.cwd(path)
 
-        files = conn.nlst()
-        return files
+        return conn.nlst()
 
     def create_directory(self, path: str) -> None:
         """

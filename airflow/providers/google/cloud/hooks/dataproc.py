@@ -285,7 +285,7 @@ class DataprocHook(GoogleBaseHook):
         :type metadata: Sequence[Tuple[str, str]]
         """
         client = self.get_cluster_client(location=region)
-        result = client.create_cluster(
+        return client.create_cluster(
             project_id=project_id,
             region=region,
             cluster=cluster,
@@ -294,7 +294,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def delete_cluster(
@@ -334,7 +333,7 @@ class DataprocHook(GoogleBaseHook):
         :type metadata: Sequence[Tuple[str, str]]
         """
         client = self.get_cluster_client(location=region)
-        result = client.delete_cluster(
+        return client.delete_cluster(
             project_id=project_id,
             region=region,
             cluster_name=cluster_name,
@@ -344,7 +343,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def diagnose_cluster(
@@ -376,7 +374,7 @@ class DataprocHook(GoogleBaseHook):
         :type metadata: Sequence[Tuple[str, str]]
         """
         client = self.get_cluster_client(location=region)
-        result = client.diagnose_cluster(
+        return client.diagnose_cluster(
             project_id=project_id,
             region=region,
             cluster_name=cluster_name,
@@ -384,7 +382,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def get_cluster(
@@ -415,7 +412,7 @@ class DataprocHook(GoogleBaseHook):
         :type metadata: Sequence[Tuple[str, str]]
         """
         client = self.get_cluster_client(location=region)
-        result = client.get_cluster(
+        return client.get_cluster(
             project_id=project_id,
             region=region,
             cluster_name=cluster_name,
@@ -423,7 +420,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def list_clusters(
@@ -459,7 +455,7 @@ class DataprocHook(GoogleBaseHook):
         :type metadata: Sequence[Tuple[str, str]]
         """
         client = self.get_cluster_client(location=region)
-        result = client.list_clusters(
+        return client.list_clusters(
             project_id=project_id,
             region=region,
             filter_=filter_,
@@ -468,7 +464,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def update_cluster(  # pylint: disable=too-many-arguments
@@ -543,7 +538,7 @@ class DataprocHook(GoogleBaseHook):
         :type metadata: Sequence[Tuple[str, str]]
         """
         client = self.get_cluster_client(location=location)
-        operation = client.update_cluster(
+        return client.update_cluster(
             project_id=project_id,
             region=location,
             cluster_name=cluster_name,
@@ -555,7 +550,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return operation
 
     @GoogleBaseHook.fallback_to_default_project_id
     def create_workflow_template(
@@ -642,7 +636,7 @@ class DataprocHook(GoogleBaseHook):
         """
         client = self.get_template_client
         name = client.workflow_template_path(project_id, location, template_name)
-        operation = client.instantiate_workflow_template(
+        return client.instantiate_workflow_template(
             name=name,
             version=version,
             parameters=parameters,
@@ -651,7 +645,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata
         )
-        return operation
 
     @GoogleBaseHook.fallback_to_default_project_id
     def instantiate_inline_workflow_template(
@@ -689,7 +682,7 @@ class DataprocHook(GoogleBaseHook):
         """
         client = self.get_template_client
         parent = client.region_path(project_id, location)
-        operation = client.instantiate_inline_workflow_template(
+        return client.instantiate_inline_workflow_template(
             parent=parent,
             template=template,
             request_id=request_id,
@@ -697,7 +690,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata
         )
-        return operation
 
     @GoogleBaseHook.fallback_to_default_project_id
     def wait_for_job(
@@ -762,7 +754,7 @@ class DataprocHook(GoogleBaseHook):
         :type metadata: Sequence[Tuple[str, str]]
         """
         client = self.get_job_client(location=location)
-        job = client.get_job(
+        return client.get_job(
             project_id=project_id,
             region=location,
             job_id=job_id,
@@ -770,7 +762,6 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata
         )
-        return job
 
     @GoogleBaseHook.fallback_to_default_project_id
     def submit_job(
@@ -883,7 +874,7 @@ class DataprocHook(GoogleBaseHook):
         :type metadata: Sequence[Tuple[str, str]]
         """
         client = self.get_job_client(location=location)
-        job = client.cancel_job(
+        return client.cancel_job(
             project_id=project_id,
             region=location,
             job_id=job_id,
@@ -891,4 +882,3 @@ class DataprocHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return job

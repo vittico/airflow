@@ -378,7 +378,7 @@ class PodGenerator:
             return base_spec
         if not base_spec and client_spec:
             return client_spec
-        elif client_spec and base_spec:
+        elif client_spec:
             client_spec.containers = PodGenerator.reconcile_containers(
                 base_spec.containers, client_spec.containers
             )
@@ -492,9 +492,7 @@ class PodGenerator:
             return None
 
         safe_uuid = uuid.uuid4().hex
-        safe_pod_id = dag_id[:MAX_POD_ID_LEN - len(safe_uuid) - 1] + "-" + safe_uuid
-
-        return safe_pod_id
+        return dag_id[:MAX_POD_ID_LEN - len(safe_uuid) - 1] + "-" + safe_uuid
 
     @staticmethod
     def validate_pod_generator_args(given_args):

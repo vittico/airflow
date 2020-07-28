@@ -252,10 +252,7 @@ class DbApiHook(BaseHook):
         else:
             target_fields = ''
 
-        if not replace:
-            sql = "INSERT INTO "
-        else:
-            sql = "REPLACE INTO "
+        sql = "INSERT INTO " if not replace else "REPLACE INTO "
         sql += "{0} {1} VALUES ({2})".format(
             table,
             target_fields,

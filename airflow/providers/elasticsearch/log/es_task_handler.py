@@ -300,5 +300,4 @@ class ElasticsearchTaskHandler(FileTaskHandler, LoggingMixin):
             task_id=task_instance.task_id,
             execution_date=task_instance.execution_date,
             try_number=try_number)
-        url = 'https://' + self.frontend.format(log_id=quote(log_id))
-        return url
+        return 'https://' + self.frontend.format(log_id=quote(log_id))

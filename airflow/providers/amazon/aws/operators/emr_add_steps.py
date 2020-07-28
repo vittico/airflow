@@ -92,7 +92,7 @@ class EmrAddStepsOperator(BaseOperator):
 
         response = emr.add_job_flow_steps(JobFlowId=job_flow_id, Steps=steps)
 
-        if not response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             raise AirflowException('Adding steps failed: %s' % response)
         else:
             self.log.info('Steps %s added to JobFlow', response['StepIds'])

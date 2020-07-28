@@ -50,7 +50,7 @@ class EmrTerminateJobFlowOperator(BaseOperator):
         self.log.info('Terminating JobFlow %s', self.job_flow_id)
         response = emr.terminate_job_flows(JobFlowIds=[self.job_flow_id])
 
-        if not response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             raise AirflowException('JobFlow termination failed: %s' % response)
         else:
             self.log.info('JobFlow with id %s terminated', self.job_flow_id)

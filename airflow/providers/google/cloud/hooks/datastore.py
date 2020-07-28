@@ -138,12 +138,10 @@ class DatastoreHook(GoogleBaseHook):
         """
         conn = self.get_conn()  # type: Any
 
-        resp = (conn  # pylint: disable=no-member
+        return (conn  # pylint: disable=no-member
                 .projects()
                 .commit(projectId=project_id, body=body)
                 .execute(num_retries=self.num_retries))
-
-        return resp
 
     @GoogleBaseHook.fallback_to_default_project_id
     def lookup(
@@ -178,12 +176,10 @@ class DatastoreHook(GoogleBaseHook):
             body['readConsistency'] = read_consistency
         if transaction:
             body['transaction'] = transaction
-        resp = (conn  # pylint: disable=no-member
+        return (conn  # pylint: disable=no-member
                 .projects()
                 .lookup(projectId=project_id, body=body)
                 .execute(num_retries=self.num_retries))
-
-        return resp
 
     @GoogleBaseHook.fallback_to_default_project_id
     def rollback(self, transaction: str, project_id: str) -> Any:
@@ -242,13 +238,11 @@ class DatastoreHook(GoogleBaseHook):
         """
         conn = self.get_conn()  # type: Any
 
-        resp = (conn  # pylint: disable=no-member
+        return (conn  # pylint: disable=no-member
                 .projects()
                 .operations()
                 .get(name=name)
                 .execute(num_retries=self.num_retries))
-
-        return resp
 
     def delete_operation(self, name: str) -> Dict:
         """
@@ -264,13 +258,11 @@ class DatastoreHook(GoogleBaseHook):
         """
         conn = self.get_conn()  # type: Any
 
-        resp = (conn  # pylint: disable=no-member
+        return (conn  # pylint: disable=no-member
                 .projects()
                 .operations()
                 .delete(name=name)
                 .execute(num_retries=self.num_retries))
-
-        return resp
 
     def poll_operation_until_done(self, name: str, polling_interval_in_seconds: int) -> Dict:
         """
@@ -338,12 +330,10 @@ class DatastoreHook(GoogleBaseHook):
             'entityFilter': entity_filter,
             'labels': labels,
         }  # type: Dict
-        resp = (admin_conn  # pylint: disable=no-member
+        return (admin_conn  # pylint: disable=no-member
                 .projects()
                 .export(projectId=project_id, body=body)
                 .execute(num_retries=self.num_retries))
-
-        return resp
 
     @GoogleBaseHook.fallback_to_default_project_id
     def import_from_storage_bucket(
@@ -391,9 +381,7 @@ class DatastoreHook(GoogleBaseHook):
             'entityFilter': entity_filter,
             'labels': labels,
         }  # type: Dict
-        resp = (admin_conn  # pylint: disable=no-member
+        return (admin_conn  # pylint: disable=no-member
                 .projects()
                 .import_(projectId=project_id, body=body)
                 .execute(num_retries=self.num_retries))
-
-        return resp

@@ -189,8 +189,8 @@ class HiveToDruidOperator(BaseOperator):
         # and overwrites the num_shards
         num_shards = self.num_shards
         target_partition_size = self.target_partition_size
-        if self.target_partition_size == -1:
-            if self.num_shards == -1:
+        if target_partition_size == -1:
+            if num_shards == -1:
                 target_partition_size = DEFAULT_TARGET_PARTITION_SIZE
         else:
             num_shards = -1

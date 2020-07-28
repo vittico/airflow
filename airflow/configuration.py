@@ -290,19 +290,21 @@ class AirflowConfigParser(ConfigParser):
     def _get_cmd_option(self, section, key):
         fallback_key = key + '_cmd'
         # if this is a valid command key...
-        if (section, key) in self.sensitive_config_values:
-            if super().has_option(section, fallback_key):
-                command = super().get(section, fallback_key)
-                return run_command(command)
+        if (section, key) in self.sensitive_config_values and super().has_option(
+            section, fallback_key
+        ):
+            command = super().get(section, fallback_key)
+            return run_command(command)
 
     def _get_secret_option(self, section, key):
         """Get Config option values from Secret Backend"""
         fallback_key = key + '_secret'
         # if this is a valid secret key...
-        if (section, key) in self.sensitive_config_values:
-            if super().has_option(section, fallback_key):
-                secrets_path = super().get(section, fallback_key)
-                return _get_config_value_from_secret_backend(secrets_path)
+        if (section, key) in self.sensitive_config_values and super().has_option(
+            section, fallback_key
+        ):
+            secrets_path = super().get(section, fallback_key)
+            return _get_config_value_from_secret_backend(secrets_path)
 
     def get(self, section, key, **kwargs):
         section = str(section).lower()
@@ -326,14 +328,15 @@ class AirflowConfigParser(ConfigParser):
             # separate the config from default config.
             return expand_env_var(
                 super().get(section, key, **kwargs))
-        if deprecated_section:
-            if super().has_option(deprecated_section, deprecated_key):
-                self._warn_deprecate(section, key, deprecated_section, deprecated_key)
-                return expand_env_var(super().get(
-                    deprecated_section,
-                    deprecated_key,
-                    **kwargs
-                ))
+        if deprecated_section and super().has_option(
+            deprecated_section, deprecated_key
+        ):
+            self._warn_deprecate(section, key, deprecated_section, deprecated_key)
+            return expand_env_var(super().get(
+                deprecated_section,
+                deprecated_key,
+                **kwargs
+            ))
 
         # ...then commands
         option = self._get_cmd_option(section, key)

@@ -103,8 +103,6 @@ def pool_import_helper(filepath):
                                                         slots=v["slots"],
                                                         description=v["description"]))
                     counter += 1
-                else:
-                    pass
         except Exception:  # pylint: disable=broad-except
             pass
         finally:

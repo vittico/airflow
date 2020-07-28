@@ -55,10 +55,9 @@ def argmin(arr, f):
     min_value = None
     min_idx = None
     for idx, item in enumerate(arr):
-        if item is not None:
-            if min_value is None or f(item) < min_value:
-                min_value = f(item)
-                min_idx = idx
+        if item is not None and (min_value is None or f(item) < min_value):
+            min_value = f(item)
+            min_idx = idx
     return min_idx
 
 
@@ -633,7 +632,7 @@ class SageMakerHook(AwsBaseHook):
 
         while running:
             time.sleep(check_interval)
-            sec = sec + check_interval
+            sec += check_interval
 
             try:
                 response = describe_function(job_name)
@@ -722,7 +721,7 @@ class SageMakerHook(AwsBaseHook):
 
         while True:
             time.sleep(check_interval)
-            sec = sec + check_interval
+            sec += check_interval
 
             state, last_description, last_describe_job_call = \
                 self.describe_training_job_with_log(job_name, positions, stream_names,
@@ -746,7 +745,7 @@ class SageMakerHook(AwsBaseHook):
 
     def list_training_jobs(
         self, name_contains: Optional[str] = None, max_results: Optional[int] = None, **kwargs
-    ) -> List[Dict]:   # noqa: D402
+    ) -> List[Dict]:    # noqa: D402
         """
         This method wraps boto3's list_training_jobs(). The training job name and max results are configurable
         via arguments. Other arguments are not, and should be provided via kwargs. Note boto3 expects these in
@@ -781,10 +780,9 @@ class SageMakerHook(AwsBaseHook):
 
         config.update(kwargs)
         list_training_jobs_request = partial(self.get_conn().list_training_jobs, **config)
-        results = self._list_request(
+        return self._list_request(
             list_training_jobs_request, "TrainingJobSummaries", max_results=max_results
         )
-        return results
 
     def _list_request(self, partial_func, result_key: str, max_results: Optional[int] = None) -> List[Dict]:
         """

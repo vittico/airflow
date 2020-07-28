@@ -53,9 +53,7 @@ class CloudantHook(BaseHook):
 
         self._validate_connection(conn)
 
-        cloudant_session = cloudant(user=conn.login, passwd=conn.password, account=conn.host)
-
-        return cloudant_session
+        return cloudant(user=conn.login, passwd=conn.password, account=conn.host)
 
     def _validate_connection(self, conn: cloudant) -> None:
         for conn_param in ['login', 'password']:

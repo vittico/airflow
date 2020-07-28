@@ -1339,38 +1339,37 @@ class AirflowHelpFormatter(argparse.HelpFormatter):
     It displays simple commands and groups of commands in separate sections.
     """
     def _format_action(self, action: Action):
-        if isinstance(action, argparse._SubParsersAction):  # pylint: disable=protected-access
+        if not isinstance(action, argparse._SubParsersAction):  # pylint: disable=protected-access
 
-            parts = []
-            action_header = self._format_action_invocation(action)
-            action_header = '%*s%s\n' % (self._current_indent, '', action_header)
-            parts.append(action_header)
+            return super()._format_action(action)
+        parts = []
+        action_header = self._format_action_invocation(action)
+        action_header = '%*s%s\n' % (self._current_indent, '', action_header)
+        parts.append(action_header)
 
-            self._indent()
-            subactions = action._get_subactions()  # pylint: disable=protected-access
-            action_subcommands, group_subcommands = partition(
-                lambda d: isinstance(ALL_COMMANDS_DICT[d.dest], GroupCommand), subactions
-            )
-            parts.append("\n")
-            parts.append('%*s%s:\n' % (self._current_indent, '', "Groups"))
-            self._indent()
-            for subaction in group_subcommands:
-                parts.append(self._format_action(subaction))
-            self._dedent()
+        self._indent()
+        subactions = action._get_subactions()  # pylint: disable=protected-access
+        action_subcommands, group_subcommands = partition(
+            lambda d: isinstance(ALL_COMMANDS_DICT[d.dest], GroupCommand), subactions
+        )
+        parts.append("\n")
+        parts.append('%*s%s:\n' % (self._current_indent, '', "Groups"))
+        self._indent()
+        for subaction in group_subcommands:
+            parts.append(self._format_action(subaction))
+        self._dedent()
 
-            parts.append("\n")
-            parts.append('%*s%s:\n' % (self._current_indent, '', "Commands"))
-            self._indent()
+        parts.append("\n")
+        parts.append('%*s%s:\n' % (self._current_indent, '', "Commands"))
+        self._indent()
 
-            for subaction in action_subcommands:
-                parts.append(self._format_action(subaction))
-            self._dedent()
-            self._dedent()
+        for subaction in action_subcommands:
+            parts.append(self._format_action(subaction))
+        self._dedent()
+        self._dedent()
 
-            # return a single string
-            return self._join_parts(parts)
-
-        return super()._format_action(action)
+        # return a single string
+        return self._join_parts(parts)
 
 
 def get_parser(dag_parser: bool = False) -> argparse.ArgumentParser:

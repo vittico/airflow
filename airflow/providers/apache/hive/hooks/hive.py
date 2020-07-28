@@ -482,12 +482,11 @@ class HiveCliHook(BaseHook):
         """
         Kill Hive cli command
         """
-        if hasattr(self, 'sp'):
-            if self.sub_process.poll() is None:
-                print("Killing the Hive job")
-                self.sub_process.terminate()
-                time.sleep(60)
-                self.sub_process.kill()
+        if hasattr(self, 'sp') and self.sub_process.poll() is None:
+            print("Killing the Hive job")
+            self.sub_process.terminate()
+            time.sleep(60)
+            self.sub_process.kill()
 
 
 class HiveMetastoreHook(BaseHook):
@@ -952,11 +951,10 @@ class HiveServer2Hook(DbApiHook):
         results_iter = self._get_results(hql, schema,
                                          fetch_size=fetch_size, hive_conf=hive_conf)
         header = next(results_iter)
-        results = {
+        return {
             'data': list(results_iter),
             'header': header
         }
-        return results
 
     def to_csv(
         self,

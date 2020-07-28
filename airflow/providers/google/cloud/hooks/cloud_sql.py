@@ -551,8 +551,7 @@ class CloudSqlProxyRunner(LoggingMixin):
             raise AirflowException("The sql proxy is already running: {}".format(
                 self.sql_proxy_process))
         else:
-            command_to_run = [self.sql_proxy_path]
-            command_to_run.extend(self.command_line_parameters)
+            command_to_run = [self.sql_proxy_path, *self.command_line_parameters]
             try:
                 self.log.info("Creating directory %s",
                               self.cloud_sql_proxy_socket_directory)
@@ -778,9 +777,7 @@ class CloudSQLDatabaseHook(BaseHook):
 
     @staticmethod
     def _get_bool(val: Any) -> bool:
-        if val == 'False':
-            return False
-        return True
+        return val != 'False'
 
     @staticmethod
     def _check_ssl_file(file_to_check, name) -> None:
@@ -825,10 +822,7 @@ class CloudSQLDatabaseHook(BaseHook):
         :return: None or rises AirflowException
         """
         if self.use_proxy and not self.sql_proxy_use_tcp:
-            if self.database_type == 'postgres':
-                suffix = "/.s.PGSQL.5432"
-            else:
-                suffix = ""
+            suffix = "/.s.PGSQL.5432" if self.database_type == 'postgres' else ""
             expected_path = "{}/{}:{}:{}{}".format(
                 self._generate_unique_path(),
                 self.project_id, self.instance,
@@ -865,9 +859,8 @@ class CloudSQLDatabaseHook(BaseHook):
 
     def _generate_connection_uri(self) -> str:
         if self.use_proxy:
-            if self.sql_proxy_use_tcp:
-                if not self.sql_proxy_tcp_port:
-                    self.reserve_free_tcp_port()
+            if self.sql_proxy_use_tcp and not self.sql_proxy_tcp_port:
+                self.reserve_free_tcp_port()
             if not self.sql_proxy_unique_path:
                 self.sql_proxy_unique_path = self._generate_unique_path()
         if not self.database_type:

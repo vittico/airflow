@@ -242,11 +242,7 @@ class CeleryExecutor(BaseExecutor):
                     self.success(key, info)
                     del self.tasks[key]
                     del self.last_state[key]
-                elif state == celery_states.FAILURE:
-                    self.fail(key, info)
-                    del self.tasks[key]
-                    del self.last_state[key]
-                elif state == celery_states.REVOKED:
+                elif state in [celery_states.FAILURE, celery_states.REVOKED]:
                     self.fail(key, info)
                     del self.tasks[key]
                     del self.last_state[key]

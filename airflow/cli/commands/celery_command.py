@@ -84,7 +84,7 @@ def flower(args):
 
 def _serve_logs(skip_serve_logs: bool = False) -> Optional[Process]:
     """Starts serve_logs sub-process"""
-    if skip_serve_logs is False:
+    if not skip_serve_logs:
         sub_proc = Process(target=serve_logs)
         sub_proc.start()
         return sub_proc

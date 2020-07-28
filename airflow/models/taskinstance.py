@@ -486,11 +486,7 @@ class TaskInstance(Base, LoggingMixin):     # pylint: disable=R0902,R0904
             TaskInstance.task_id == self.task_id,
             TaskInstance.execution_date == self.execution_date,
         ).all()
-        if ti:
-            state = ti[0].state
-        else:
-            state = None
-        return state
+        return ti[0].state if ti else None
 
     @provide_session
     def error(self, session=None):
@@ -524,10 +520,7 @@ class TaskInstance(Base, LoggingMixin):     # pylint: disable=R0902,R0904
             TaskInstance.task_id == self.task_id,
             TaskInstance.execution_date == self.execution_date)
 
-        if lock_for_update:
-            ti = qry.with_for_update().first()
-        else:
-            ti = qry.first()
+        ti = qry.with_for_update().first() if lock_for_update else qry.first()
         if ti:
             # Fields ordered per model definition
             self.start_date = ti.start_date
@@ -888,12 +881,10 @@ class TaskInstance(Base, LoggingMixin):     # pylint: disable=R0902,R0904
         :return: DagRun
         """
         from airflow.models.dagrun import DagRun  # Avoid circular import
-        dr = session.query(DagRun).filter(
+        return session.query(DagRun).filter(
             DagRun.dag_id == self.dag_id,
             DagRun.execution_date == self.execution_date
         ).first()
-
-        return dr
 
     @provide_session
     def check_and_change_state_before_execution(    # pylint: disable=too-many-arguments
@@ -1876,8 +1867,4 @@ class SimpleTaskInstance:
             TaskInstance.task_id == self._task_id,
             TaskInstance.execution_date == self._execution_date)
 
-        if lock_for_update:
-            ti = qry.with_for_update().first()
-        else:
-            ti = qry.first()
-        return ti
+        return qry.with_for_update().first() if lock_for_update else qry.first()

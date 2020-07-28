@@ -163,10 +163,10 @@ class CassandraHook(BaseHook, LoggingMixin):
                                       'WhiteListRoundRobinPolicy',)
             child_policy_name = policy_args.get('child_load_balancing_policy',
                                                 'RoundRobinPolicy')
-            child_policy_args = policy_args.get('child_load_balancing_policy_args', {})
             if child_policy_name not in allowed_child_policies:
                 return TokenAwarePolicy(RoundRobinPolicy())
             else:
+                child_policy_args = policy_args.get('child_load_balancing_policy_args', {})
                 child_policy = CassandraHook.get_lb_policy(child_policy_name,
                                                            child_policy_args)
                 return TokenAwarePolicy(child_policy)
@@ -202,7 +202,7 @@ class CassandraHook(BaseHook, LoggingMixin):
         keyspace = self.keyspace
         if '.' in table:
             keyspace, table = table.split('.', 1)
-        ks_str = " AND ".join(f"{key}=%({key})s" for key in keys.keys())
+        ks_str = " AND ".join(f"{key}=%({key})s" for key in keys)
         query = f"SELECT * FROM {keyspace}.{table} WHERE {ks_str}"
         try:
             result = self.get_conn().execute(query, keys)

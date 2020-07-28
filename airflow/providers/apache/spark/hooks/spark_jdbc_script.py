@@ -42,14 +42,13 @@ def set_common_options(spark_source: Any,
     :param driver: JDBC resource driver
     """
 
-    spark_source = spark_source \
+    return spark_source \
         .format('jdbc') \
         .option('url', url) \
         .option('dbtable', jdbc_table) \
         .option('user', user) \
         .option('password', password) \
         .option('driver', driver)
-    return spark_source
 
 
 # pylint: disable=too-many-arguments

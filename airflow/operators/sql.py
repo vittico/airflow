@@ -192,7 +192,7 @@ class SQLValueCheckOperator(BaseOperator):
 
         if not is_numeric_value_check:
             tests = self._get_string_matches(records, pass_value_conv)
-        elif is_numeric_value_check:
+        else:
             try:
                 numeric_records = self._to_float(records)
             except (ValueError, TypeError):
@@ -200,9 +200,6 @@ class SQLValueCheckOperator(BaseOperator):
                     "Converting a result to float failed.\n{}".format(error_msg)
                 )
             tests = self._get_numeric_matches(numeric_records, pass_value_conv)
-        else:
-            tests = []
-
         if not all(tests):
             raise AirflowException(error_msg)
 

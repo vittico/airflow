@@ -97,7 +97,6 @@ class PigCliHook(BaseHook):
         """
         Kill Pig job
         """
-        if self.sub_process:
-            if self.sub_process.poll() is None:
-                self.log.info("Killing the Pig job")
-                self.sub_process.kill()
+        if self.sub_process and self.sub_process.poll() is None:
+            self.log.info("Killing the Pig job")
+            self.sub_process.kill()

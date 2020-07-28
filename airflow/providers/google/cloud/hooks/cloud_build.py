@@ -114,14 +114,12 @@ class CloudBuildHook(GoogleBaseHook):
         # Get result
         build_id = response["metadata"]["build"]["id"]
 
-        result = (
+        return (
             service.projects()  # pylint: disable=no-member
             .builds()
             .get(projectId=project_id, id=build_id)
             .execute(num_retries=self.num_retries)
         )
-
-        return result
 
     def _wait_for_operation_to_complete(self, operation_name: str) -> None:
         """

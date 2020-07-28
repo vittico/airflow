@@ -411,12 +411,12 @@ def task_clear(args):
         # todo clear command only accepts a single dag_id. no reason for get_dags with 's' except regex?
         dags = get_dags(args.subdir, args.dag_id, use_regex=args.dag_regex)
 
-        if args.task_regex:
-            for idx, dag in enumerate(dags):
-                dags[idx] = dag.sub_dag(
-                    task_regex=args.task_regex,
-                    include_downstream=args.downstream,
-                    include_upstream=args.upstream)
+    if args.task_regex:
+        for idx, dag in enumerate(dags):
+            dags[idx] = dag.sub_dag(
+                task_regex=args.task_regex,
+                include_downstream=args.downstream,
+                include_upstream=args.upstream)
 
     DAG.clear_dags(
         dags,

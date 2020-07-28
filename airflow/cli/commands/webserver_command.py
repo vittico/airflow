@@ -112,8 +112,7 @@ class GunicornMonitor(LoggingMixin):
         all_filenames: List[str] = []
         for (root, _, filenames) in os.walk(settings.PLUGINS_FOLDER):
             all_filenames.extend(os.path.join(root, f) for f in filenames)
-        plugin_state = {f: self._get_file_hash(f) for f in sorted(all_filenames)}
-        return plugin_state
+        return {f: self._get_file_hash(f) for f in sorted(all_filenames)}
 
     @staticmethod
     def _get_file_hash(fname: str):

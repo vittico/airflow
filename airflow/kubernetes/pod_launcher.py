@@ -144,8 +144,7 @@ class PodLauncher(LoggingMixin):
         self.log.info(
             'Event: %s had an event of type %s',
             event.metadata.name, event.status.phase)
-        status = self.process_status(event.metadata.name, event.status.phase)
-        return status
+        return self.process_status(event.metadata.name, event.status.phase)
 
     def pod_not_started(self, pod: V1Pod):
         """Tests if pod has not started"""

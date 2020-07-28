@@ -765,8 +765,7 @@ class CloudDataCatalogHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        tag = next(t for t in tags_list if t.template == template_name)
-        return tag
+        return next(t for t in tags_list if t.template == template_name)
 
     def lookup_entry(
         self,

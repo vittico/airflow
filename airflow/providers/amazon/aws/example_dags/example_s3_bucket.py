@@ -29,7 +29,7 @@ def upload_keys():
     """This is a python callback to add keys into the s3 bucket"""
     # add keys to bucket
     s3_hook = S3Hook()
-    for i in range(0, 3):
+    for i in range(3):
         s3_hook.load_string(
             string_data="input",
             key=f"path/data{i}",

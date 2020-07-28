@@ -65,8 +65,7 @@ class FTPSensor(BaseSensorOperator):
         """Extract error code from ftp exception"""
         try:
             matches = self.error_code_pattern.match(str(e))
-            code = int(matches.group(0))
-            return code
+            return int(matches.group(0))
         except ValueError:
             return e
 

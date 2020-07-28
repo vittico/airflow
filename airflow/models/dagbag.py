@@ -424,13 +424,16 @@ class DagBag(BaseDagBag, LoggingMixin):
                 )
 
                 file_parse_end_dttm = timezone.utcnow()
-                stats.append(FileLoadStat(
-                    file=filepath.replace(settings.DAGS_FOLDER, ''),
-                    duration=file_parse_end_dttm - file_parse_start_dttm,
-                    dag_num=len(found_dags),
-                    task_num=sum([len(dag.tasks) for dag in found_dags]),
-                    dags=str([dag.dag_id for dag in found_dags]),
-                ))
+                stats.append(
+                    FileLoadStat(
+                        file=filepath.replace(settings.DAGS_FOLDER, ''),
+                        duration=file_parse_end_dttm - file_parse_start_dttm,
+                        dag_num=len(found_dags),
+                        task_num=sum(len(dag.tasks) for dag in found_dags),
+                        dags=str([dag.dag_id for dag in found_dags]),
+                    )
+                )
+
             except Exception as e:  # pylint: disable=broad-except
                 self.log.exception(e)
 
@@ -453,12 +456,13 @@ class DagBag(BaseDagBag, LoggingMixin):
         """Prints a report around DagBag loading stats"""
         stats = self.dagbag_stats
         dag_folder = self.dag_folder
-        duration = sum([o.duration for o in stats], timedelta()).total_seconds()
-        dag_num = sum([o.dag_num for o in stats])
-        task_num = sum([o.task_num for o in stats])
+        duration = sum((o.duration for o in stats), timedelta()).total_seconds()
+        dag_num = sum(o.dag_num for o in stats)
+        task_num = sum(o.task_num for o in stats)
         table = tabulate(stats, headers="keys")
 
-        report = textwrap.dedent(f"""\n
+        return textwrap.dedent(
+            f"""\n
         -------------------------------------------------------------------
         DagBag loading stats for {dag_folder}
         -------------------------------------------------------------------
@@ -466,8 +470,8 @@ class DagBag(BaseDagBag, LoggingMixin):
         Total task number: {task_num}
         DagBag parsing time: {duration}
         {table}
-        """)
-        return report
+        """
+        )
 
     def sync_to_db(self):
         """

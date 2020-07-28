@@ -196,9 +196,7 @@ class DagRun(Base, LoggingMixin):
         if no_backfills:
             qry = qry.filter(DR.run_type != DagRunType.BACKFILL_JOB.value)
 
-        dr = qry.order_by(DR.execution_date).all()
-
-        return dr
+        return qry.order_by(DR.execution_date).all()
 
     @staticmethod
     def generate_run_id(run_type: DagRunType, execution_date: datetime) -> str:
@@ -242,13 +240,11 @@ class DagRun(Base, LoggingMixin):
 
         :param task_id: the task id
         """
-        ti = session.query(TI).filter(
+        return session.query(TI).filter(
             TI.dag_id == self.dag_id,
             TI.execution_date == self.execution_date,
             TI.task_id == task_id
         ).first()
-
-        return ti
 
     def get_dag(self):
         """
@@ -513,7 +509,7 @@ class DagRun(Base, LoggingMixin):
             .group_by(cls.dag_id)
             .subquery()
         )
-        dagruns = (
+        return (
             session
             .query(cls)
             .join(subquery,
@@ -521,4 +517,3 @@ class DagRun(Base, LoggingMixin):
                        cls.execution_date == subquery.c.execution_date))
             .all()
         )
-        return dagruns

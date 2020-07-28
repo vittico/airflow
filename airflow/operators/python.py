@@ -526,11 +526,7 @@ class PythonVirtualenvOperator(PythonOperator):
                 input_filename, output_filename, string_args_filename]
 
     def _generate_python_code(self):
-        if self.use_dill:
-            pickling_library = 'dill'
-        else:
-            pickling_library = 'pickle'
-
+        pickling_library = 'dill' if self.use_dill else 'pickle'
         # dont try to read pickle if we didnt pass anything
         if self._pass_op_args():
             load_args_line = 'with open(sys.argv[1], "rb") as file: arg_dict = {}.load(file)' \

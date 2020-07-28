@@ -66,11 +66,7 @@ class AwsLogsHook(AwsBaseHook):
 
         event_count = 1
         while event_count > 0:
-            if next_token is not None:
-                token_arg = {'nextToken': next_token}
-            else:
-                token_arg = {}
-
+            token_arg = {'nextToken': next_token} if next_token is not None else {}
             response = self.get_conn().get_log_events(logGroupName=log_group,
                                                       logStreamName=log_stream_name,
                                                       startTime=start_time,

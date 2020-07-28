@@ -662,11 +662,10 @@ class S3Hook(AwsBaseHook):
         copy_source = {'Bucket': source_bucket_name,
                        'Key': source_bucket_key,
                        'VersionId': source_version_id}
-        response = self.get_conn().copy_object(Bucket=dest_bucket_name,
+        return self.get_conn().copy_object(Bucket=dest_bucket_name,
                                                Key=dest_bucket_key,
                                                CopySource=copy_source,
                                                ACL=acl_policy)
-        return response
 
     @provide_bucket_name
     def delete_bucket(self, bucket_name: str, force_delete: bool = False) -> None:

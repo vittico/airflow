@@ -175,7 +175,7 @@ class CloudAutoMLHook(GoogleBaseHook):
         """
         client = self.prediction_client
         name = client.model_path(project=project_id, location=location, model=model_id)
-        result = client.batch_predict(
+        return client.batch_predict(
             name=name,
             input_config=input_config,
             output_config=output_config,
@@ -184,7 +184,6 @@ class CloudAutoMLHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def predict(
@@ -228,7 +227,7 @@ class CloudAutoMLHook(GoogleBaseHook):
         """
         client = self.prediction_client
         name = client.model_path(project=project_id, location=location, model=model_id)
-        result = client.predict(
+        return client.predict(
             name=name,
             payload=payload,
             params=params,
@@ -236,7 +235,6 @@ class CloudAutoMLHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def create_dataset(
@@ -272,14 +270,13 @@ class CloudAutoMLHook(GoogleBaseHook):
         """
         client = self.get_conn()
         parent = client.location_path(project=project_id, location=location)
-        result = client.create_dataset(
+        return client.create_dataset(
             parent=parent,
             dataset=dataset,
             retry=retry,
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def import_data(
@@ -320,14 +317,13 @@ class CloudAutoMLHook(GoogleBaseHook):
         name = client.dataset_path(
             project=project_id, location=location, dataset=dataset_id
         )
-        result = client.import_data(
+        return client.import_data(
             name=name,
             input_config=input_config,
             retry=retry,
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def list_column_specs(  # pylint: disable=too-many-arguments
@@ -384,7 +380,7 @@ class CloudAutoMLHook(GoogleBaseHook):
             dataset=dataset_id,
             table_spec=table_spec_id,
         )
-        result = client.list_column_specs(
+        return client.list_column_specs(
             parent=parent,
             field_mask=field_mask,
             filter_=filter_,
@@ -393,7 +389,6 @@ class CloudAutoMLHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def get_model(
@@ -428,10 +423,9 @@ class CloudAutoMLHook(GoogleBaseHook):
         """
         client = self.get_conn()
         name = client.model_path(project=project_id, location=location, model=model_id)
-        result = client.get_model(
+        return client.get_model(
             name=name, retry=retry, timeout=timeout, metadata=metadata
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def delete_model(
@@ -466,10 +460,9 @@ class CloudAutoMLHook(GoogleBaseHook):
         """
         client = self.get_conn()
         name = client.model_path(project=project_id, location=location, model=model_id)
-        result = client.delete_model(
+        return client.delete_model(
             name=name, retry=retry, timeout=timeout, metadata=metadata
         )
-        return result
 
     def update_dataset(
         self,
@@ -500,14 +493,13 @@ class CloudAutoMLHook(GoogleBaseHook):
         :return: `google.cloud.automl_v1beta1.types.Dataset` instance..
         """
         client = self.get_conn()
-        result = client.update_dataset(
+        return client.update_dataset(
             dataset=dataset,
             update_mask=update_mask,
             retry=retry,
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def deploy_model(
@@ -554,14 +546,13 @@ class CloudAutoMLHook(GoogleBaseHook):
         """
         client = self.get_conn()
         name = client.model_path(project=project_id, location=location, model=model_id)
-        result = client.deploy_model(
+        return client.deploy_model(
             name=name,
             retry=retry,
             timeout=timeout,
             metadata=metadata,
             image_object_detection_model_deployment_metadata=image_detection_metadata,
         )
-        return result
 
     def list_table_specs(
         self,
@@ -610,7 +601,7 @@ class CloudAutoMLHook(GoogleBaseHook):
         parent = client.dataset_path(
             project=project_id, location=location, dataset=dataset_id
         )
-        result = client.list_table_specs(
+        return client.list_table_specs(
             parent=parent,
             filter_=filter_,
             page_size=page_size,
@@ -618,7 +609,6 @@ class CloudAutoMLHook(GoogleBaseHook):
             timeout=timeout,
             metadata=metadata,
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def list_datasets(
@@ -653,10 +643,9 @@ class CloudAutoMLHook(GoogleBaseHook):
         """
         client = self.get_conn()
         parent = client.location_path(project=project_id, location=location)
-        result = client.list_datasets(
+        return client.list_datasets(
             parent=parent, retry=retry, timeout=timeout, metadata=metadata
         )
-        return result
 
     @GoogleBaseHook.fallback_to_default_project_id
     def delete_dataset(
@@ -693,7 +682,6 @@ class CloudAutoMLHook(GoogleBaseHook):
         name = client.dataset_path(
             project=project_id, location=location, dataset=dataset_id
         )
-        result = client.delete_dataset(
+        return client.delete_dataset(
             name=name, retry=retry, timeout=timeout, metadata=metadata
         )
-        return result

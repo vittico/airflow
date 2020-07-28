@@ -62,11 +62,10 @@ class _SecretManagerClient(LoggingMixin):
         """
         Create an authenticated KMS client
         """
-        _client = SecretManagerServiceClient(
+        return SecretManagerServiceClient(
             credentials=self.credentials,
             client_info=ClientInfo(client_library_version='airflow_v' + version)
         )
-        return _client
 
     def get_secret(self,
                    secret_id: str,
@@ -85,8 +84,7 @@ class _SecretManagerClient(LoggingMixin):
         name = self.client.secret_version_path(project_id, secret_id, secret_version)
         try:
             response = self.client.access_secret_version(name)
-            value = response.payload.data.decode('UTF-8')
-            return value
+            return response.payload.data.decode('UTF-8')
         except NotFound:
             self.log.error(
                 "GCP API Call Error (NotFound): Secret ID %s not found.", secret_id

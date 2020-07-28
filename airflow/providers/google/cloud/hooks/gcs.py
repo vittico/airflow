@@ -564,11 +564,7 @@ class GCSHook(GoogleBaseHook):
                 blob_names.append(blob.name)
 
             prefixes = blobs.prefixes
-            if prefixes:
-                ids += list(prefixes)
-            else:
-                ids += blob_names
-
+            ids += list(prefixes) if prefixes else blob_names
             page_token = blobs.next_page_token
             if page_token is None:
                 # empty next page token

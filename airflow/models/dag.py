@@ -273,11 +273,14 @@ class DAG(BaseDag, LoggingMixin):
             self.timezone = settings.TIMEZONE
 
         # Apply the timezone we settled on to end_date if it wasn't supplied
-        if 'end_date' in self.default_args and self.default_args['end_date']:
-            if isinstance(self.default_args['end_date'], str):
-                self.default_args['end_date'] = (
-                    timezone.parse(self.default_args['end_date'], timezone=self.timezone)
-                )
+        if (
+            'end_date' in self.default_args
+            and self.default_args['end_date']
+            and isinstance(self.default_args['end_date'], str)
+        ):
+            self.default_args['end_date'] = (
+                timezone.parse(self.default_args['end_date'], timezone=self.timezone)
+            )
 
         self.start_date = timezone.convert_to_utc(start_date)
         self.end_date = timezone.convert_to_utc(end_date)
@@ -394,10 +397,7 @@ class DAG(BaseDag, LoggingMixin):
         start = cron.get_next(datetime)
         cron_next = cron.get_next(datetime)
 
-        if cron_next.minute == start.minute and cron_next.hour == start.hour:
-            return True
-
-        return False
+        return cron_next.minute == start.minute and cron_next.hour == start.hour
 
     def following_schedule(self, dttm):
         """
@@ -473,7 +473,7 @@ class DAG(BaseDag, LoggingMixin):
         using_end_date = end_date
 
         # dates for dag runs
-        using_start_date = using_start_date or min([t.start_date for t in self.tasks])
+        using_start_date = using_start_date or min(t.start_date for t in self.tasks)
         using_end_date = using_end_date or timezone.utcnow()
 
         # next run date for a subdag isn't relevant (schedule_interval for subdags
@@ -733,14 +733,12 @@ class DAG(BaseDag, LoggingMixin):
         :param session:
         :return: The DagRun if found, otherwise None.
         """
-        dagrun = (
+        return (
             session.query(DagRun)
             .filter(
                 DagRun.dag_id == self.dag_id,
                 DagRun.execution_date == execution_date)
             .first())
-
-        return dagrun
 
     @provide_session
     def get_dagruns_between(self, start_date, end_date, session=None):
@@ -752,15 +750,13 @@ class DAG(BaseDag, LoggingMixin):
         :param session:
         :return: The list of DagRuns found.
         """
-        dagruns = (
+        return (
             session.query(DagRun)
             .filter(
                 DagRun.dag_id == self.dag_id,
                 DagRun.execution_date >= start_date,
                 DagRun.execution_date <= end_date)
             .all())
-
-        return dagruns
 
     @provide_session
     def get_latest_execution_date(self, session=None):
@@ -1279,8 +1275,7 @@ class DAG(BaseDag, LoggingMixin):
         raise TaskNotFound("Task {task_id} not found".format(task_id=task_id))
 
     def pickle_info(self):
-        d = {}
-        d['is_picklable'] = True
+        d = {'is_picklable': True}
         try:
             dttm = timezone.utcnow()
             pickled = pickle.dumps(self)
@@ -1810,7 +1805,7 @@ class DagModel(Base):
             .all()
         )
 
-        paused_dag_ids = set(paused_dag_id for paused_dag_id, in paused_dag_ids)
+        paused_dag_ids = {paused_dag_id for paused_dag_id, in paused_dag_ids}
         return paused_dag_ids
 
     @property

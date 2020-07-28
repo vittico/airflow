@@ -72,7 +72,7 @@ class EmrCreateJobFlowOperator(BaseOperator):
 
         response = emr.create_job_flow(self.job_flow_overrides)
 
-        if not response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             raise AirflowException('JobFlow creation failed: %s' % response)
         else:
             self.log.info('JobFlow with id %s created', response['JobFlowId'])

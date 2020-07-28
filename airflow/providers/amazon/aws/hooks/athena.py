@@ -72,8 +72,7 @@ class AWSAthenaHook(AwsBaseHook):
         if client_request_token:
             params['ClientRequestToken'] = client_request_token
         response = self.get_conn().start_query_execution(**params)
-        query_execution_id = response['QueryExecutionId']
-        return query_execution_id
+        return response['QueryExecutionId']
 
     def check_query_status(self, query_execution_id):
         """

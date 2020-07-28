@@ -638,7 +638,7 @@ class BaseOperator(Operator, LoggingMixin, metaclass=BaseOperatorMeta):
                 "The DAG assigned to {} can not be changed.".format(self))
         elif self.task_id not in dag.task_dict:
             dag.add_task(self)
-        elif self.task_id in dag.task_dict and dag.task_dict[self.task_id] is not self:
+        elif dag.task_dict[self.task_id] is not self:
             dag.add_task(self)
 
         self._dag = dag  # pylint: disable=attribute-defined-outside-init
@@ -734,13 +734,13 @@ class BaseOperator(Operator, LoggingMixin, metaclass=BaseOperatorMeta):
         """
         if self.weight_rule == WeightRule.ABSOLUTE:
             return self.priority_weight
-        elif self.weight_rule == WeightRule.DOWNSTREAM:
+        elif (
+            self.weight_rule == WeightRule.DOWNSTREAM
+            or self.weight_rule != WeightRule.UPSTREAM
+        ):
             upstream = False
-        elif self.weight_rule == WeightRule.UPSTREAM:
-            upstream = True
         else:
-            upstream = False
-
+            upstream = True
         if not self._dag:
             return self.priority_weight
         from airflow.models.dag import DAG

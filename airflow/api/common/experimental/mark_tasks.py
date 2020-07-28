@@ -134,9 +134,9 @@ def set_state(
 
 
 # Flake and pylint disagree about correct indents here
-def all_subdag_tasks_query(sub_dag_run_ids, session, state, confirmed_dates):  # noqa: E123
+def all_subdag_tasks_query(sub_dag_run_ids, session, state, confirmed_dates):    # noqa: E123
     """Get *all* tasks of the sub dags"""
-    qry_sub_dag = session.query(TaskInstance). \
+    return session.query(TaskInstance). \
         filter(
         TaskInstance.dag_id.in_(sub_dag_run_ids),
         TaskInstance.execution_date.in_(confirmed_dates)
@@ -146,13 +146,12 @@ def all_subdag_tasks_query(sub_dag_run_ids, session, state, confirmed_dates):  #
             TaskInstance.state.is_(None),
             TaskInstance.state != state
         )
-    )  # noqa: E123
-    return qry_sub_dag
+    )
 
 
 def get_all_dag_task_query(dag, session, state, task_ids, confirmed_dates):
     """Get all tasks of the main dag that will be affected by a state change"""
-    qry_dag = session.query(TaskInstance). \
+    return session.query(TaskInstance). \
         filter(
         TaskInstance.dag_id == dag.dag_id,
         TaskInstance.execution_date.in_(confirmed_dates),
@@ -164,7 +163,6 @@ def get_all_dag_task_query(dag, session, state, task_ids, confirmed_dates):
             TaskInstance.state != state
         )
     )
-    return qry_dag
 
 
 def get_subdag_runs(dag, session, state, task_ids, commit, confirmed_dates):

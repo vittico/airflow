@@ -400,9 +400,9 @@ def dag_test(args, session=None):
 
         dot_graph = render_dag(dag, tis=tis)
         print()
-        if filename:
-            _save_dot_to_file(dot_graph, filename)
-        if imgcat:
-            _display_dot_via_imgcat(dot_graph)
-        if show_dagrun:
-            print(dot_graph.source)
+    if filename:
+        _save_dot_to_file(dot_graph, filename)
+    if imgcat:
+        _display_dot_via_imgcat(dot_graph)
+    if show_dagrun:
+        print(dot_graph.source)

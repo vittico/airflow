@@ -48,12 +48,12 @@ PY38 = sys.version_info >= (3, 8)
 
 def __getattr__(name):
     # PEP-562: Lazy loaded attributes on python modules
-    if name == "DAG":
-        from airflow.models.dag import DAG  # pylint: disable=redefined-outer-name
-        return DAG
     if name == "AirflowException":
         from airflow.exceptions import AirflowException  # pylint: disable=redefined-outer-name
         return AirflowException
+    elif name == "DAG":
+        from airflow.models.dag import DAG  # pylint: disable=redefined-outer-name
+        return DAG
     raise AttributeError(f"module {__name__} has no attribute {name}")
 
 

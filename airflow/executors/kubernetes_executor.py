@@ -219,11 +219,7 @@ class KubeConfig:  # pylint: disable=too-many-instance-attributes
             self.kubernetes_section, 'airflow_local_settings_configmap')
 
         affinity_json = conf.get(self.kubernetes_section, 'affinity')
-        if affinity_json:
-            self.kube_affinity = json.loads(affinity_json)
-        else:
-            self.kube_affinity = None
-
+        self.kube_affinity = json.loads(affinity_json) if affinity_json else None
         tolerations_json = conf.get(self.kubernetes_section, 'tolerations')
         if tolerations_json:
             self.kube_tolerations = json.loads(tolerations_json)
@@ -437,9 +433,7 @@ class AirflowKubernetesScheduler(LoggingMixin):
         return watcher
 
     def _health_check_kube_watcher(self):
-        if self.kube_watcher.is_alive():
-            pass
-        else:
+        if not self.kube_watcher.is_alive():
             self.log.error(
                 'Error while health checking kube watcher process. '
                 'Process died for unknown reasons')
@@ -552,9 +546,7 @@ class AirflowKubernetesScheduler(LoggingMixin):
         """
         safe_key = safe_dag_id + safe_task_id
 
-        safe_pod_id = safe_key[:MAX_POD_ID_LEN - len(safe_uuid) - 1] + "-" + safe_uuid
-
-        return safe_pod_id
+        return safe_key[:MAX_POD_ID_LEN - len(safe_uuid) - 1] + "-" + safe_uuid
 
     @staticmethod
     def _create_pod_id(dag_id: str, task_id: str) -> str:

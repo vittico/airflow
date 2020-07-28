@@ -78,8 +78,7 @@ class RenderedTaskInstanceFields(Base):
         ).one_or_none()
 
         if result:
-            rendered_fields = result.rendered_fields
-            return rendered_fields
+            return result.rendered_fields
         else:
             return None
 

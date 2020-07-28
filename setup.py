@@ -56,8 +56,7 @@ except FileNotFoundError:
 def airflow_test_suite():
     """Test suite for Airflow tests"""
     test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover(os.path.join(my_dir, 'tests'), pattern='test_*.py')
-    return test_suite
+    return test_loader.discover(os.path.join(my_dir, 'tests'), pattern='test_*.py')
 
 
 class CleanCommand(Command):
@@ -665,7 +664,10 @@ def is_package_excluded(package: str, exclusion_list: List[str]):
     :param exclusion_list: list of excluded packages
     :return: true if package should be excluded
     """
-    return any([package.startswith(excluded_package) for excluded_package in exclusion_list])
+    return any(
+        package.startswith(excluded_package)
+        for excluded_package in exclusion_list
+    )
 
 
 devel_all = [package for package in devel_all if not is_package_excluded(

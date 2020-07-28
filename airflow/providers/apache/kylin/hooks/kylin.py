@@ -63,8 +63,7 @@ class KylinHook(BaseHook):
         """
         cube_source = self.get_conn().get_datasource(datasource_name)
         try:
-            response = cube_source.invoke_command(op, **op_args)
-            return response
+            return cube_source.invoke_command(op, **op_args)
         except exceptions.KylinError as err:
             raise AirflowException("Cube operation {} error , Message: {}".format(op, err))
 

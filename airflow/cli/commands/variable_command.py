@@ -41,14 +41,13 @@ def variables_get(args):
                 args.key,
                 deserialize_json=args.json
             )
-            print(var)
         else:
             var = Variable.get(
                 args.key,
                 deserialize_json=args.json,
                 default_var=args.default
             )
-            print(var)
+        print(var)
     except (ValueError, KeyError) as e:
         print(str(e), file=sys.stderr)
         sys.exit(1)

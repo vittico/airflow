@@ -604,7 +604,7 @@ class BigQueryHook(GoogleBaseHook, DbApiHook):
             ],
             'googleSheetsOptions': ['skipLeadingRows']
         }
-        if source_format in src_fmt_to_param_mapping.keys():
+        if source_format in src_fmt_to_param_mapping:
             valid_configs = src_fmt_to_configs_mapping[src_fmt_to_param_mapping[source_format]]
             src_fmt_configs = _validate_src_fmt_configs(source_format, src_fmt_configs, valid_configs,
                                                         backward_compatibility_configs)
@@ -1388,7 +1388,7 @@ class BigQueryHook(GoogleBaseHook, DbApiHook):
 
         job_complete = False
         while polling_attempts < max_polling_attempts and not job_complete:
-            polling_attempts = polling_attempts + 1
+            polling_attempts += 1
             job_complete = self.poll_job_complete(job_id)
             if job_complete:
                 self.log.info('Job successfully canceled: %s, %s', project_id, job_id)
@@ -1421,12 +1421,11 @@ class BigQueryHook(GoogleBaseHook, DbApiHook):
         :type location: str
         """
         client = self.get_client(project_id=project_id, location=location)
-        job = client.get_job(
+        return client.get_job(
             job_id=job_id,
             project=project_id,
             location=location
         )
-        return job
 
     @GoogleBaseHook.fallback_to_default_project_id
     def insert_job(

@@ -289,7 +289,7 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
                     tmpl.format(key, str(self._env_vars[key]))]
         elif self._env_vars and self._connection['deploy_mode'] != "cluster":
             self._env = self._env_vars  # Do it on Popen of the process
-        elif self._env_vars and self._connection['deploy_mode'] == "cluster":
+        elif self._env_vars:
             raise AirflowException(
                 "SparkSubmitHook env_vars is not supported in standalone-cluster mode.")
         if self._is_kubernetes and self._connection['namespace']:
@@ -355,10 +355,10 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
 
         :return: full command to be executed
         """
-        curl_max_wait_time = 30
         spark_host = self._connection['master']
         if spark_host.endswith(':6066'):
             spark_host = spark_host.replace("spark://", "http://")
+            curl_max_wait_time = 30
             connection_cmd = [
                 "/usr/bin/curl",
                 "--max-time",
@@ -369,9 +369,7 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
             self.log.info(connection_cmd)
 
             # The driver id so we can poll for its status
-            if self._driver_id:
-                pass
-            else:
+            if not self._driver_id:
                 raise AirflowException(
                     "Invalid status: attempted to poll driver " +
                     "status but no driver id is known. Giving up.")
@@ -422,19 +420,23 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
 
         # Check spark-submit return code. In Kubernetes mode, also check the value
         # of exit code in the log, as it may differ.
-        if returncode or (self._is_kubernetes and self._spark_exit_code != 0):
-            if self._is_kubernetes:
-                raise AirflowException(
-                    "Cannot execute: {}. Error code is: {}. Kubernetes spark exit code is: {}".format(
-                        self._mask_cmd(spark_submit_cmd), returncode, self._spark_exit_code
-                    )
+        if (
+            returncode
+            and self._is_kubernetes
+            or self._is_kubernetes
+            and self._spark_exit_code != 0
+        ):
+            raise AirflowException(
+                "Cannot execute: {}. Error code is: {}. Kubernetes spark exit code is: {}".format(
+                    self._mask_cmd(spark_submit_cmd), returncode, self._spark_exit_code
                 )
-            else:
-                raise AirflowException(
-                    "Cannot execute: {}. Error code is: {}.".format(
-                        self._mask_cmd(spark_submit_cmd), returncode
-                    )
+            )
+        elif returncode:
+            raise AirflowException(
+                "Cannot execute: {}. Error code is: {}.".format(
+                    self._mask_cmd(spark_submit_cmd), returncode
                 )
+            )
 
         self.log.debug("Should track driver: %s", self._should_track_driver_status)
 
@@ -587,7 +589,7 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
 
             if returncode:
                 if missed_job_status_reports < max_missed_job_status_reports:
-                    missed_job_status_reports = missed_job_status_reports + 1
+                    missed_job_status_reports += 1
                 else:
                     raise AirflowException(
                         "Failed to poll for the driver status {} times: returncode = {}"
@@ -628,17 +630,16 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
 
         self.log.debug("Kill Command is being called")
 
-        if self._should_track_driver_status:
-            if self._driver_id:
-                self.log.info('Killing driver %s on cluster', self._driver_id)
+        if self._should_track_driver_status and self._driver_id:
+            self.log.info('Killing driver %s on cluster', self._driver_id)
 
-                kill_cmd = self._build_spark_driver_kill_command()
-                driver_kill = subprocess.Popen(kill_cmd,
-                                               stdout=subprocess.PIPE,
-                                               stderr=subprocess.PIPE)
+            kill_cmd = self._build_spark_driver_kill_command()
+            driver_kill = subprocess.Popen(kill_cmd,
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
 
-                self.log.info("Spark driver %s killed with return code: %s",
-                              self._driver_id, driver_kill.wait())
+            self.log.info("Spark driver %s killed with return code: %s",
+                          self._driver_id, driver_kill.wait())
 
         if self._submit_sp and self._submit_sp.poll() is None:
             self.log.info('Sending kill signal to %s', self._connection['spark_binary'])

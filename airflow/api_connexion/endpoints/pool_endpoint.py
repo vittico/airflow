@@ -73,11 +73,16 @@ def patch_pool(pool_name, session, update_mask=None):
     """
     # Only slots can be modified in 'default_pool'
     try:
-        if pool_name == Pool.DEFAULT_POOL_NAME and request.json["name"] != Pool.DEFAULT_POOL_NAME:
-            if update_mask and len(update_mask) == 1 and update_mask[0].strip() == "slots":
-                pass
-            else:
-                raise BadRequest(detail="Default Pool's name can't be modified")
+        if (
+            pool_name == Pool.DEFAULT_POOL_NAME
+            and request.json["name"] != Pool.DEFAULT_POOL_NAME
+            and (
+                not update_mask
+                or len(update_mask) != 1
+                or update_mask[0].strip() != "slots"
+            )
+        ):
+            raise BadRequest(detail="Default Pool's name can't be modified")
     except KeyError:
         pass
 

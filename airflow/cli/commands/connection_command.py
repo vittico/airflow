@@ -41,8 +41,7 @@ def _tabulate_connection(conns: List[Connection], tablefmt: str):
         } for conn in conns
     ]
 
-    msg = tabulate(tabulate_data, tablefmt=tablefmt, headers='keys')
-    return msg
+    return tabulate(tabulate_data, tablefmt=tablefmt, headers='keys')
 
 
 def connections_list(args):
@@ -120,11 +119,11 @@ def connections_add(args):
                                                      host=args.conn_host or '',
                                                      port=args.conn_port or ''),
                                          args.conn_schema or '', '', '', '')))
-            print(msg)
         else:
             msg = '\n\tA connection with `conn_id`={conn_id} already exists\n'
             msg = msg.format(conn_id=new_conn.conn_id)
-            print(msg)
+
+        print(msg)
 
 
 @cli_utils.action_logging

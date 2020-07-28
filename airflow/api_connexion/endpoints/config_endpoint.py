@@ -26,7 +26,7 @@ LINE_SEP = '\n'  # `\n` cannot appear in f-strings
 
 def _conf_dict_to_config(conf_dict: dict) -> Config:
     """Convert config dict to a Config object"""
-    config = Config(
+    return Config(
         sections=[
             ConfigSection(
                 name=section,
@@ -38,7 +38,6 @@ def _conf_dict_to_config(conf_dict: dict) -> Config:
             for section, options in conf_dict.items()
         ]
     )
-    return config
 
 
 def _option_to_text(config_option: ConfigOption) -> str:

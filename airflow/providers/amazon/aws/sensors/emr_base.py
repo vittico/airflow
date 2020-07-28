@@ -60,7 +60,7 @@ class EmrBaseSensor(BaseSensorOperator):
     def poke(self, context):
         response = self.get_emr_response()
 
-        if not response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             self.log.info('Bad HTTP response: %s', response)
             return False
 

@@ -130,14 +130,13 @@ class KubernetesHook(BaseHook):
         if namespace is None:
             namespace = self.get_namespace()
         try:
-            response = custom_resource_definition_api.get_namespaced_custom_object(
+            return custom_resource_definition_api.get_namespaced_custom_object(
                 group=group,
                 version=version,
                 namespace=namespace,
                 plural=plural,
                 name=name
             )
-            return response
         except client.rest.ApiException as e:
             raise AirflowException("Exception when calling -> get_custom_resource_definition: %s\n" % e)
 
@@ -147,5 +146,4 @@ class KubernetesHook(BaseHook):
         """
         connection = self.get_connection(self.conn_id)
         extras = connection.extra_dejson
-        namespace = extras.get("extra__kubernetes__namespace", "default")
-        return namespace
+        return extras.get("extra__kubernetes__namespace", "default")

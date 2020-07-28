@@ -67,9 +67,7 @@ class AthenaSensor(BaseSensorOperator):
         if state in self.FAILURE_STATES:
             raise AirflowException('Athena sensor failed')
 
-        if state in self.INTERMEDIATE_STATES:
-            return False
-        return True
+        return state not in self.INTERMEDIATE_STATES
 
     def get_hook(self):
         """Create and return an AWSAthenaHook"""

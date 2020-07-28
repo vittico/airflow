@@ -268,13 +268,15 @@ class BackfillJob(BaseJob):
 
             self.log.debug("Executor state: %s task %s", state, ti)
 
-            if state in (State.FAILED, State.SUCCESS):
-                if ti.state == State.RUNNING or ti.state == State.QUEUED:
-                    msg = ("Executor reports task instance {} finished ({}) "
-                           "although the task says its {}. Was the task "
-                           "killed externally? Info: {}".format(ti, state, ti.state, info))
-                    self.log.error(msg)
-                    ti.handle_failure(msg)
+            if state in (State.FAILED, State.SUCCESS) and ti.state in [
+                State.RUNNING,
+                State.QUEUED,
+            ]:
+                msg = ("Executor reports task instance {} finished ({}) "
+                       "although the task says its {}. Was the task "
+                       "killed externally? Info: {}".format(ti, state, ti.state, info))
+                self.log.error(msg)
+                ti.handle_failure(msg)
 
     @provide_session
     def _get_dag_run(self, run_date: datetime, dag: DAG, session: Session = None):

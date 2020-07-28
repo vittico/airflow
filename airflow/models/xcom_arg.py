@@ -102,8 +102,7 @@ class XComArg:
             xcom_pull_kwargs.append(f"key='{self.key}'")
 
         xcom_pull_kwargs = ", ".join(xcom_pull_kwargs)
-        xcom_pull = f"task_instance.xcom_pull({xcom_pull_kwargs})"
-        return xcom_pull
+        return f"task_instance.xcom_pull({xcom_pull_kwargs})"
 
     @property
     def operator(self) -> BaseOperator:

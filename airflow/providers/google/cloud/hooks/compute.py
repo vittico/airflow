@@ -203,11 +203,10 @@ class ComputeEngineHook(GoogleBaseHook):
             https://cloud.google.com/compute/docs/reference/rest/v1/instanceTemplates
         :rtype: dict
         """
-        response = self.get_conn().instanceTemplates().get(  # pylint: disable=no-member
+        return self.get_conn().instanceTemplates().get(  # pylint: disable=no-member
             project=project_id,
             instanceTemplate=resource_id
         ).execute(num_retries=self.num_retries)
-        return response
 
     @GoogleBaseHook.fallback_to_default_project_id
     def insert_instance_template(
@@ -271,12 +270,14 @@ class ComputeEngineHook(GoogleBaseHook):
             https://cloud.google.com/compute/docs/reference/rest/beta/instanceGroupManagers
         :rtype: dict
         """
-        response = self.get_conn().instanceGroupManagers().get(  # pylint: disable=no-member
-            project=project_id,
-            zone=zone,
-            instanceGroupManager=resource_id
-        ).execute(num_retries=self.num_retries)
-        return response
+        return (
+            self.get_conn()
+            .instanceGroupManagers()
+            .get(  # pylint: disable=no-member
+                project=project_id, zone=zone, instanceGroupManager=resource_id
+            )
+            .execute(num_retries=self.num_retries)
+        )
 
     @GoogleBaseHook.fallback_to_default_project_id
     def patch_instance_group_manager(

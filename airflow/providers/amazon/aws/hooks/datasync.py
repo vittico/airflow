@@ -205,9 +205,12 @@ class AWSDataSyncHook(AwsBaseHook):
         for task in self.tasks:
             task_arn = task["TaskArn"]
             task_description = self.get_task_description(task_arn)
-            if task_description["SourceLocationArn"] in source_location_arns:
-                if task_description["DestinationLocationArn"] in destination_location_arns:
-                    result.append(task_arn)
+            if (
+                task_description["SourceLocationArn"] in source_location_arns
+                and task_description["DestinationLocationArn"]
+                in destination_location_arns
+            ):
+                result.append(task_arn)
         return result
 
     def start_task_execution(self, task_arn, **kwargs):

@@ -163,10 +163,10 @@ class _DataflowJobsController(LoggingMixin):
         if not self._jobs:
             return False
 
-        for job in self._jobs:
-            if job['currentState'] not in DataflowJobStatus.END_STATES:
-                return True
-        return False
+        return any(
+            job['currentState'] not in DataflowJobStatus.END_STATES
+            for job in self._jobs
+        )
 
     # pylint: disable=too-many-nested-blocks
     def _get_current_jobs(self) -> List[Dict]:
@@ -716,9 +716,7 @@ class DataflowHook(GoogleBaseHook):
         for attr, value in variables.items():
             if attr == 'labels':
                 command += label_formatter(value)
-            elif value is None:
-                command.append(f"--{attr}")
-            elif isinstance(value, bool) and value:
+            elif value is None or isinstance(value, bool) and value:
                 command.append(f"--{attr}")
             elif isinstance(value, list):
                 command.extend([f"--{attr}={v}" for v in value])

@@ -67,7 +67,7 @@ class _SessionFactory(LoggingMixin):
         aws_access_key_id, aws_secret_access_key = self._read_credentials_from_connection()
         aws_session_token = self.extra_config.get("aws_session_token")
         region_name = self.region_name
-        if self.region_name is None and 'region_name' in self.extra_config:
+        if region_name is None and 'region_name' in self.extra_config:
             self.log.info("Retrieving region_name from Connection.extra_config['region_name']")
             region_name = self.extra_config["region_name"]
         self.log.info(
@@ -229,9 +229,8 @@ class _SessionFactory(LoggingMixin):
         # Extract SAML Assertion from the returned HTML / XML
         xml = etree.fromstring(idp_reponse.content)
         saml_assertion = xml.xpath(xpath)
-        if isinstance(saml_assertion, list):
-            if len(saml_assertion) == 1:
-                saml_assertion = saml_assertion[0]
+        if isinstance(saml_assertion, list) and len(saml_assertion) == 1:
+            saml_assertion = saml_assertion[0]
         if not saml_assertion:
             raise ValueError('Invalid SAML Assertion')
         return saml_assertion

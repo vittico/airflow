@@ -217,9 +217,7 @@ class PinotAdminHook(BaseHook):
         :param verbose:
         :type verbose: Optional[bool]
         """
-        command = [self.cmd_path]
-        command.extend(cmd)
-
+        command = [self.cmd_path, *cmd]
         env = None
         if self.pinot_admin_system_exit:
             env = os.environ.copy()
